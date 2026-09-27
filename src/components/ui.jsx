@@ -111,6 +111,19 @@ export function Sheet({ open, onClose, title, children }) {
   );
 }
 
+export function ConfirmDialog() {
+  const { confirmReq, answer } = useApp();
+  return (
+    <Sheet open={!!confirmReq} onClose={() => answer(false)}>
+      <p className="title-md" style={{ lineHeight: 1.4 }}>{confirmReq?.message}</p>
+      <div className="grid-2 mt-24">
+        <button className="btn" onClick={() => answer(false)}>Cancel</button>
+        <button className="btn primary" autoFocus onClick={() => answer(true)}>{confirmReq?.okLabel}</button>
+      </div>
+    </Sheet>
+  );
+}
+
 export function Toast() {
   const { toast } = useApp();
   if (!toast) return null;

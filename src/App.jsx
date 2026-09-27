@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './store/AppContext.jsx';
-import { BottomNav, Toast } from './components/ui.jsx';
+import { BottomNav, Toast, ConfirmDialog } from './components/ui.jsx';
 import Onboarding from './pages/Onboarding.jsx';
 import Home from './pages/Home.jsx';
 import Assess from './pages/Assess.jsx';
@@ -57,6 +57,7 @@ function Shell() {
       </div>
       {!hideNav && <BottomNav />}
       <Toast />
+      <ConfirmDialog />
     </>
   );
 }

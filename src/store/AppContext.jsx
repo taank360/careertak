@@ -42,6 +42,15 @@ const today = () => new Date().toISOString().slice(0, 10);
 export function AppProvider({ children }) {
   const [state, setState] = useState(load);
   const [toast, setToast] = useState(null);
+  const [confirmReq, setConfirmReq] = useState(null);
+
+  /** In-app confirmation (window.confirm is blocked in embedded/webview contexts). */
+  const ask = useCallback((message, okLabel = 'Yes') => new Promise((resolve) => {
+    setConfirmReq({ message, okLabel, resolve });
+  }), []);
+  const answer = useCallback((ok) => {
+    setConfirmReq((r) => { r?.resolve(ok); return null; });
+  }, []);
 
   useEffect(() => {
     try {
@@ -93,13 +102,13 @@ export function AppProvider({ children }) {
   }, []);
 
   const reset = useCallback(() => {
-    localStorage.removeItem(KEY);
+    try { localStorage.removeItem(KEY); } catch { /* ignore */ }
     setState(initialState);
   }, []);
 
   const t = useMemo(() => makeT(state.settings.lang), [state.settings.lang]);
 
-  const value = useMemo(() => ({ state, update, updateProfile, addXP, notify, snapshot, reset, toast, t, lang: state.settings.lang }), [state, update, updateProfile, addXP, notify, snapshot, reset, toast, t]);
+  const value = useMemo(() => ({ state, update, updateProfile, addXP, notify, snapshot, reset, toast, t, lang: state.settings.lang, ask, answer, confirmReq }), [state, update, updateProfile, addXP, notify, snapshot, reset, toast, t, ask, answer, confirmReq]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

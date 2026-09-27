@@ -17,7 +17,7 @@ export default function Quiz() {
 
 function QuizRun({ id }) {
   const mod = moduleById(id);
-  const { state, update, addXP, lang } = useApp();
+  const { state, update, addXP, lang, ask } = useApp();
   const nav = useNavigate();
   const [phase, setPhase] = useState('intro');
   const [i, setI] = useState(0);
@@ -116,7 +116,7 @@ function QuizRun({ id }) {
     const opts = mod.type === 'likert' ? LIKERT : q.o;
     return (
       <>
-        <TopBar title={`${i + 1} / ${total}`} back onBack={() => { if (confirm('Quit this test? Progress will be lost.')) nav('/assess'); }}
+        <TopBar title={`${i + 1} / ${total}`} back onBack={async () => { if (await ask('Quit this test? Progress will be lost.', 'Quit')) nav('/assess'); }}
           right={timed && <span className={`badge ${left < 60 ? 'bad' : ''}`}><Clock size={12} /> {fmt(Math.max(0, left))}</span>} />
         <div className="page no-nav">
           <Bar value={((i + (answers[i] != null ? 1 : 0)) / total) * 100} thin />

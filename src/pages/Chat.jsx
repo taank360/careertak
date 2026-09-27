@@ -12,7 +12,7 @@ const PROMPTS = {
 };
 
 export default function Chat() {
-  const { state, update, t, lang } = useApp();
+  const { state, update, t, lang, ask } = useApp();
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [ai, setAi] = useState(null);
@@ -50,7 +50,7 @@ export default function Chat() {
     <>
       <TopBar
         title={<span className="row" style={{ gap: 8 }}>{t('coach')} <span className={`badge ${ai?.ai ? 'ok' : ''}`}>{ai == null ? '…' : ai.ai ? '✨ Claude AI' : '⚡ Offline AI'}</span></span>}
-        right={msgs.length > 0 && <button className="icon-btn" aria-label="Clear chat" onClick={() => confirm('Clear conversation?') && update((s) => ({ ...s, chat: [] }))}><Trash2 size={19} /></button>}
+        right={msgs.length > 0 && <button className="icon-btn" aria-label="Clear chat" onClick={async () => (await ask('Clear this conversation?', 'Clear')) && update((s) => ({ ...s, chat: [] }))}><Trash2 size={19} /></button>}
       />
       <div className="chat-page">
         <div className="chat-list" ref={listRef}>

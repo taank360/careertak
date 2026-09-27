@@ -30,7 +30,7 @@ function ListEditor({ title, items, fields, onChange, empty }) {
 }
 
 export default function Profile() {
-  const { state, update, updateProfile, reset, lang } = useApp();
+  const { state, update, updateProfile, reset, lang, ask } = useApp();
   const nav = useNavigate();
   const p = state.profile;
   const [tab, setTab] = useState('profile');
@@ -159,7 +159,7 @@ export default function Profile() {
               <button className="list-item" onClick={() => nav('/report')}><div className="li-ico">📊</div><div className="grow li-title">Readiness report card</div><ChevronRight size={18} /></button>
               <button className="list-item" onClick={() => nav('/institute')}><div className="li-ico">🏫</div><div className="grow li-title">Placement cell dashboard (demo)</div><ChevronRight size={18} /></button>
               <button className="list-item" onClick={exportData}><div className="li-ico"><Download size={20} /></div><div className="grow"><div className="li-title">Export my data</div><div className="li-sub">Download everything as JSON</div></div></button>
-              <button className="list-item" onClick={() => { if (confirm('Delete all your data from this device? This cannot be undone.')) { reset(); nav('/onboarding'); } }}>
+              <button className="list-item" onClick={async () => { if (await ask('Delete all your data from this device? This cannot be undone.', 'Delete')) { reset(); nav('/onboarding'); } }}>
                 <div className="li-ico" style={{ color: 'var(--bad)' }}><RotateCcw size={20} /></div><div className="grow"><div className="li-title" style={{ color: 'var(--bad)' }}>Reset app</div><div className="li-sub">Erase all data on this device</div></div>
               </button>
             </div>

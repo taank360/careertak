@@ -19,7 +19,7 @@ function speak(text, lang) {
 }
 
 export default function Interview() {
-  const { state, update, addXP, lang } = useApp();
+  const { state, update, addXP, lang, ask } = useApp();
   const nav = useNavigate();
   const [phase, setPhase] = useState('setup');
   const [role, setRole] = useState(state.profile.targetRole || 'software-developer');
@@ -199,7 +199,7 @@ export default function Interview() {
   const wc = answer.trim() ? answer.trim().split(/\s+/).length : 0;
   return (
     <>
-      <TopBar title={`Question ${i + 1} of ${qs.length}`} back onBack={() => { if (confirm('End interview?')) setPhase('setup'); }}
+      <TopBar title={`Question ${i + 1} of ${qs.length}`} back onBack={async () => { if (await ask('End this interview? Answers so far will not be saved.', 'End')) setPhase('setup'); }}
         right={<span className="badge">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, '0')}</span>} />
       <div className="page no-nav">
         <Bar value={((i + (evalRes ? 1 : 0)) / qs.length) * 100} thin />

@@ -9,7 +9,7 @@ import { careerById } from '../data/careers.js';
 const TYPE = { learn: ['📘', 'Learn'], practice: ['🏋️', 'Practice'], build: ['🛠️', 'Build'], apply: ['📨', 'Apply'], test: ['📝', 'Test'] };
 
 export default function Roadmap() {
-  const { state, update, updateProfile, addXP, notify, t, lang } = useApp();
+  const { state, update, updateProfile, addXP, notify, t, lang, ask } = useApp();
   const nav = useNavigate();
   const career = careerById(state.profile.targetRole);
   const rm = state.roadmap;
@@ -84,7 +84,7 @@ export default function Roadmap() {
 
   return (
     <>
-      <TopBar title={t('roadmap')} right={<button className="icon-btn" aria-label="Regenerate" onClick={() => confirm('Regenerate roadmap? Task progress will reset.') && generate()}><RefreshCw size={19} /></button>} />
+      <TopBar title={t('roadmap')} right={<button className="icon-btn" aria-label="Regenerate" onClick={async () => (await ask('Regenerate roadmap? Task progress will reset.', 'Regenerate')) && generate()}><RefreshCw size={19} /></button>} />
       <div className="page">
         <div className="card hero">
           <div className="row between">
