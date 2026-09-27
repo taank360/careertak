@@ -94,6 +94,15 @@ To open it on your phone during development, run `npm run dev` and open `http://
 
 ## ☁️ Deploy
 
+### GitHub Pages (free, automatic)
+1. Repo → **Settings → Pages → Build and deployment → Source: _GitHub Actions_**.
+2. Push to `main` (or this branch), or run **Actions → Deploy to GitHub Pages → Run workflow**.
+3. The site goes live at `https://<username>.github.io/careertak/`. It works on phones and can be installed as an app.
+
+GitHub Pages is static hosting, so the app runs with the offline AI engine there. Claude AI needs the Node server (below).
+
+### Other options
+
 * **Full stack (recommended):** any Node host (Render, Railway, a VM or NIC cloud) → `npm install && npm run build && npm start`, and set `ANTHROPIC_API_KEY`.
 * **Static only:** upload `dist/` to Netlify, Vercel, GitHub Pages or any web server. Everything works with the offline AI engine.
 
