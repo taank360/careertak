@@ -1,0 +1,7 @@
+{
+  "appId": "in.careertak.app",
+  "appName": "CareerTak",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}

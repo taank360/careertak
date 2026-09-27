@@ -1,0 +1,30 @@
+{
+  "name": "careertak",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CareerTak – AI-powered career readiness & employability platform (PWA) for students of Madhya Pradesh",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "node --watch server/index.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server/index.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "express": "^5.2.1",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.1"
+  }
+}
