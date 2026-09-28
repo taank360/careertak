@@ -89,7 +89,7 @@ export default function Future() {
             <div className="chips mt-12">
               {FILTERS.map(([k, l]) => <button key={k} className={`chip${filter === k ? ' active' : ''}`} onClick={() => setFilter(k)}>{l}</button>)}
             </div>
-            <div className="stack mt-8">
+            <div className="cards mt-8">
               {tab === 'jobs' && apply(jobs).map((c) => <OptionCard key={c.id} item={c} lang={lang} showFit={hasProfile} onOpen={() => nav(`/explore/${c.id}`)} />)}
               {tab === 'business' && apply(businesses).map((b) => <OptionCard key={b.id} item={b} lang={lang} showFit={hasProfile} onOpen={() => setBiz(b)} />)}
             </div>
@@ -102,7 +102,7 @@ export default function Future() {
               <Info size={18} style={{ flexShrink: 0, marginTop: 2 }} color="var(--accent-ink)" />
               <span>These jobs are shrinking because of automation and digital services. Avoid starting a career here. If you are already in one, switch to the suggested option.</span>
             </div>
-            <div className="stack mt-12">
+            <div className="cards mt-12">
               {DECLINING.map((d) => {
                 const alt = careerById(d.switchTo);
                 return (

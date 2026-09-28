@@ -160,7 +160,7 @@ export default function SelfAnalysis() {
             <div className="section">
               <div className="section-head"><h2 style={{ color: 'var(--bad)' }}>🎯 {hi ? 'कमज़ोरियाँ कैसे दूर करें' : 'Weaknesses to remove'}</h2></div>
               {a.weaknesses.length === 0 && <div className="card small muted">No weak areas right now. Keep practising your average areas to reach 70+.</div>}
-              <div className="stack">
+              <div className="cards">
                 {a.weaknesses.map((w) => (
                   <div key={w.id} className="card">
                     <div className="row between">
@@ -170,7 +170,7 @@ export default function SelfAnalysis() {
                     <p className="small muted mt-8">{w.plan.why}</p>
                     <div className="eyebrow mt-12">Your plan</div>
                     <ol className="steps small">{w.plan.steps.map((s) => <li key={s}>{s}</li>)}</ol>
-                    <div className="row mt-8" style={{ gap: 8 }}>
+                    <div className="row wrap mt-8" style={{ gap: 8 }}>
                       <a className="btn xs soft" href={w.plan.resource.url} target="_blank" rel="noreferrer">{w.plan.resource.name} <ExternalLink size={12} /></a>
                       {w.test && <button className="btn xs" onClick={() => nav(`/assess/${w.test}`)}><RotateCcw size={12} /> Retest</button>}
                       {w.id === 'experience' && <button className="btn xs" onClick={() => nav('/profile')}>Add experience</button>}
@@ -186,14 +186,14 @@ export default function SelfAnalysis() {
             <div className="section">
               <div className="section-head"><h2>💼 {hi ? 'आपके लिए सबसे अच्छी नौकरियाँ' : 'Best jobs for you'}</h2><button className="link-btn" onClick={() => nav('/future')}>All</button></div>
               <p className="tiny muted mb-8">Matched on your interests + strengths, and ranked higher when future demand is growing.</p>
-              <div className="stack">
+              <div className="cards">
                 {a.careers.map((c) => <Suggestion key={c.id} item={c} lang={lang} onOpen={() => nav(`/explore/${c.id}`)} />)}
               </div>
             </div>
 
             <div className="section">
               <div className="section-head"><h2>🚀 {hi ? 'आपके लिए व्यवसाय' : 'Business ideas for you'}</h2><button className="link-btn" onClick={() => nav('/future?tab=business')}>All</button></div>
-              <div className="stack">
+              <div className="cards">
                 {a.businesses.map((b) => <Suggestion key={b.id} item={b} lang={lang} onOpen={() => nav('/future?tab=business')} />)}
               </div>
             </div>

@@ -65,7 +65,7 @@ export default function Jobs() {
               <Info size={14} style={{ flexShrink: 0, marginTop: 1 }} />
               <span>Prototype shows sample listings ranked by your skill match. In production these sync from MP Rojgar, NCS & PM Internship portals. Applied: <b>{state.applied.length}</b></span>
             </div>
-            <div className="stack mt-12">
+            <div className="cards mt-12">
               {list.map((o) => {
                 const c = careerById(o.career);
                 const applied = state.applied.includes(o.id);

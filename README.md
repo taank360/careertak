@@ -94,6 +94,8 @@ To open it on your phone during development, run `npm run dev` and open `http://
 
 ## ☁️ Deploy
 
+👉 **Step-by-step free hosting, database and device guide: [DEPLOY.md](DEPLOY.md)** (Vercel + Supabase).
+
 ### GitHub Pages (free, automatic)
 1. Repo → **Settings → Pages → Build and deployment → Source: _GitHub Actions_**.
 2. Push to `main` (or this branch), or run **Actions → Deploy to GitHub Pages → Run workflow**.

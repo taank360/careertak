@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Target, Compass, BarChart3, Mic, Map, Briefcase } from 'lucide-react';
 import { useApp } from '../store/AppContext.jsx';
-import { Logo } from '../components/ui.jsx';
+import { Logo, Sheet } from '../components/ui.jsx';
+import Account from '../components/Account.jsx';
+import { dbEnabled } from '../lib/db.js';
 import { CAREERS, careerById } from '../data/careers.js';
 import { SKILLS, LEVELS } from '../data/skills.js';
 import { MP_DISTRICTS, EDUCATION_LEVELS, STREAMS } from '../data/opportunities.js';
@@ -15,6 +17,10 @@ export default function Onboarding() {
   const nav = useNavigate();
   const [step, setStep] = useState(0);
   const [unsure, setUnsure] = useState(false);
+  const [signIn, setSignIn] = useState(false);
+
+  // Signing in on a new device restores a finished profile — go straight to the app.
+  useEffect(() => { if (state.onboarded) nav('/', { replace: true }); }, [state.onboarded, nav]);
   const p = state.profile;
   const total = 5;
 
@@ -68,7 +74,12 @@ export default function Onboarding() {
             ))}
           </div>
           <button className="btn primary block mt-24" onClick={() => setStep(1)}>{lang === 'hi' ? 'शुरू करें' : 'Get started — it’s free'}</button>
-          <p className="tiny faint center mt-12">Your data stays on your device. No sign-up needed.</p>
+          {dbEnabled
+            ? <button className="btn ghost block mt-8" onClick={() => setSignIn(true)}>Already registered? Sign in</button>
+            : <p className="tiny faint center mt-12">Your data stays on your device. No sign-up needed.</p>}
+          <Sheet open={signIn} onClose={() => setSignIn(false)} title="Sign in">
+            <Account compact />
+          </Sheet>
         </div>
       )}
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Download, RotateCcw, ChevronRight } from 'lucide-react';
 import { useApp, levelFromXP } from '../store/AppContext.jsx';
 import { TopBar, Bar } from '../components/ui.jsx';
+import Account from '../components/Account.jsx';
 import { CAREERS } from '../data/careers.js';
 import { MP_DISTRICTS, EDUCATION_LEVELS, STREAMS } from '../data/opportunities.js';
 import { experienceScore } from '../engine/readiness.js';
@@ -142,6 +143,9 @@ export default function Profile() {
 
         {tab === 'settings' && (
           <div className="mt-16">
+            <div className="eyebrow mb-8">Account & cloud sync</div>
+            <Account />
+            <div className="mb-12" />
             <div className="field"><label>Language / भाषा</label>
               <div className="seg">
                 <button className={lang === 'en' ? 'active' : ''} onClick={() => setSetting('lang', 'en')}>English</button>

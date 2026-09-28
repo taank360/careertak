@@ -112,8 +112,8 @@ export default function Home() {
             <h2>{hi ? 'चरण 2 · भविष्य के लिए सही करियर' : 'Step 2 · Future-ready matches'}</h2>
             <Link to="/future">{t('seeAll')}</Link>
           </div>
-          <div className="chips" style={{ gap: 10, paddingBottom: 8 }}>
-            {[...sa.careers.slice(0, 3), ...sa.businesses.slice(0, 2)].map((c) => (
+          <div className="chips hscroll" style={{ gap: 10, paddingBottom: 8 }}>
+            {[...sa.careers.slice(0, 3), ...sa.businesses.slice(0, 1)].map((c) => (
               <button key={c.id} className="card tap" style={{ minWidth: 168, maxWidth: 168, textAlign: 'left', padding: 14 }} onClick={() => nav(c.kind === 'business' ? '/future?tab=business' : `/explore/${c.id}`)}>
                 <div className="row between"><span style={{ fontSize: 26 }}>{c.icon}</span><span className="badge plain">{c.kind === 'business' ? 'Business' : 'Job'}</span></div>
                 <div className="bold small mt-8" style={{ lineHeight: 1.3, minHeight: 36, whiteSpace: 'normal' }}>{hi ? c.hi : c.title}</div>

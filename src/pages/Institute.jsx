@@ -1,4 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSync } from '../store/SyncContext.jsx';
+import { loadCohort } from '../lib/db.js';
+import { STREAMS } from '../data/opportunities.js';
 import { useApp } from '../store/AppContext.jsx';
 import { TopBar, Bar, scoreColor } from '../components/ui.jsx';
 import { computeReadiness, bandFor, BANDS } from '../engine/readiness.js';
@@ -32,32 +35,53 @@ function makeCohort() {
   return out;
 }
 
+const streamLabel = (id) => STREAMS.find((x) => x.id === id)?.label.split(' /')[0] || 'Other';
+
 export default function Institute() {
   const { state } = useApp();
+  const sync = useSync();
   const [dept, setDept] = useState('All');
+  const [live, setLive] = useState(null);
+  const [loadErr, setLoadErr] = useState('');
   const me = computeReadiness(state);
-  const cohort = useMemo(makeCohort, []);
+  const demo = useMemo(makeCohort, []);
+
+  // Staff accounts see their real students from the database.
+  useEffect(() => {
+    if (!sync?.staff) { setLive(null); return; }
+    loadCohort()
+      .then((data) => setLive(data.map((r) => ({ id: r.id, name: r.name || 'Student', dept: streamLabel(r.stream), score: r.readiness ?? 0, gaps: r.weaknesses || [], tests: r.tests_done || 0 }))))
+      .catch((e) => setLoadErr(e.message));
+  }, [sync?.staff]);
+
+  const cohort = live && live.length ? live : demo;
+  const isLive = cohort === live;
+  const depts = [...new Set(cohort.map((x) => x.dept))];
+  const gapList = isLive ? [...new Set(cohort.flatMap((x) => x.gaps))] : GAP_SKILLS;
   const rows = dept === 'All' ? cohort : cohort.filter((s) => s.dept === dept);
-  const avg = Math.round(rows.reduce((s, x) => s + x.score, 0) / rows.length);
-  const ready = Math.round((rows.filter((x) => x.score >= 60).length / rows.length) * 100);
+  const n = Math.max(1, rows.length);
+  const avg = Math.round(rows.reduce((s, x) => s + x.score, 0) / n);
+  const ready = Math.round((rows.filter((x) => x.score >= 60).length / n) * 100);
   const bands = BANDS.map((b) => ({ ...b, n: rows.filter((x) => bandFor(x.score).id === b.id).length })).reverse();
-  const deptAvg = DEPTS.map((d) => {
-    const s = cohort.filter((x) => x.dept === d.id);
-    return { ...d, avg: Math.round(s.reduce((a, x) => a + x.score, 0) / s.length), n: s.length };
+  const deptAvg = depts.map((id) => {
+    const s = cohort.filter((x) => x.dept === id);
+    return { id, avg: Math.round(s.reduce((a, x) => a + x.score, 0) / Math.max(1, s.length)), n: s.length };
   });
-  const gapFreq = GAP_SKILLS.map((g) => ({ g, pct: Math.round((rows.filter((x) => x.gaps.includes(g)).length / rows.length) * 100) })).sort((a, b) => b.pct - a.pct);
+  const gapFreq = gapList.map((g) => ({ g, pct: Math.round((rows.filter((x) => x.gaps.includes(g)).length / n) * 100) })).sort((a, b) => b.pct - a.pct).slice(0, 8);
   const atRisk = [...rows].sort((a, b) => a.score - b.score).slice(0, 5);
-  const percentile = Math.round((cohort.filter((x) => x.score < me.score).length / cohort.length) * 100);
+  const percentile = Math.round((cohort.filter((x) => x.score < me.score).length / Math.max(1, cohort.length)) * 100);
 
   return (
     <>
       <TopBar title="Placement Cell Dashboard" back />
       <div className="page">
-        <div className="card flat small muted mb-12" style={{ padding: 10 }}>
-          🏫 Institution view (demo data for 240 students). Colleges & TPOs use this to spot skill gaps across batches and plan training — aligned with the “help institutions improve employability” goal.
+        <div className={`card ${isLive ? 'soft' : 'flat'} small mb-12`} style={{ padding: 10 }}>
+          {isLive
+            ? <>🟢 <b>Live data</b>: {cohort.length} students{sync.staff.college ? ` of ${sync.staff.college}` : ''} from the database.</>
+            : <>🏫 Demo data for 240 students. Placement-cell staff who sign in see their real students here.{loadErr && ` (${loadErr})`}</>}
         </div>
 
-        <div className="chips">{['All', ...DEPTS.map((d) => d.id)].map((d) => <button key={d} className={`chip${dept === d ? ' active' : ''}`} onClick={() => setDept(d)}>{d}</button>)}</div>
+        <div className="chips">{['All', ...depts].map((d) => <button key={d} className={`chip${dept === d ? ' active' : ''}`} onClick={() => setDept(d)}>{d}</button>)}</div>
 
         <div className="grid-2 mt-12">
           <div className="stat"><div className="stat-num">{rows.length}</div><div className="stat-label">Students</div></div>

@@ -1,0 +1,4 @@
+# Netlify: static hosting (offline AI engine). For Claude AI use Vercel or Render.
+[build]
+  command = "npm run build"
+  publish = "dist"

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, ScanSearch, Sparkles, TrendingUp, Briefcase, ChevronLeft, X } from 'lucide-react';
+import { Home, ScanSearch, Sparkles, TrendingUp, Briefcase, ChevronLeft, X, ClipboardCheck, Map, FileText, Mic, UserRound, BarChart3 } from 'lucide-react';
 import { useApp } from '../store/AppContext.jsx';
 
 export function Logo({ size = 34 }) {
@@ -35,6 +35,7 @@ export function TopBar({ title, back, right, onBack }) {
   );
 }
 
+/** Bottom tab bar on phones; becomes a left sidebar (with extra links) on laptops. */
 export function BottomNav() {
   const { t } = useApp();
   const items = [
@@ -44,14 +45,26 @@ export function BottomNav() {
     { to: '/future', icon: TrendingUp, label: t('careers') },
     { to: '/jobs', icon: Briefcase, label: t('jobs') },
   ];
+  const extra = [
+    { to: '/assess', icon: ClipboardCheck, label: t('assessments') },
+    { to: '/roadmap', icon: Map, label: t('roadmap') },
+    { to: '/resume', icon: FileText, label: t('resume') },
+    { to: '/interview', icon: Mic, label: t('interview') },
+    { to: '/report', icon: BarChart3, label: t('report') },
+    { to: '/profile', icon: UserRound, label: t('profile') },
+  ];
+  const link = ({ to, icon: Icon, label, end, center }, cls = '') => (
+    <NavLink key={to} to={to} end={end} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}${center ? ' center' : ''}${cls}`}>
+      <span className="nav-ico"><Icon size={center ? 24 : 21} strokeWidth={2.2} /></span>
+      <span>{label}</span>
+    </NavLink>
+  );
   return (
     <nav className="bottom-nav" aria-label="Main">
-      {items.map(({ to, icon: Icon, label, end, center }) => (
-        <NavLink key={to} to={to} end={end} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}${center ? ' center' : ''}`}>
-          <span className="nav-ico"><Icon size={center ? 24 : 21} strokeWidth={2.2} /></span>
-          <span>{label}</span>
-        </NavLink>
-      ))}
+      <div className="nav-brand"><Logo /><span className="brand-name">Career<span>Tak</span></span></div>
+      {items.map((i) => link(i))}
+      <div className="nav-sep">Tools</div>
+      {extra.map((i) => link(i, ' nav-extra'))}
     </nav>
   );
 }

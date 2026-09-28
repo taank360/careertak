@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './store/AppContext.jsx';
+import { SyncProvider } from './store/SyncContext.jsx';
 import { BottomNav, Toast, ConfirmDialog } from './components/ui.jsx';
 import Onboarding from './pages/Onboarding.jsx';
 import Home from './pages/Home.jsx';
@@ -69,14 +70,13 @@ function Shell() {
 export default function App() {
   return (
     <AppProvider>
+      <SyncProvider>
       <HashRouter>
         <div className="app">
           <Shell />
         </div>
-        <div className="desk-note">
-          <b>📱 Best on mobile.</b> Open this page on your phone and tap <b>“Add to Home Screen”</b> to install CareerTak as an app.
-        </div>
       </HashRouter>
+      </SyncProvider>
     </AppProvider>
   );
 }
