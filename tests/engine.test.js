@@ -131,3 +131,46 @@ test('offline counsellor answers in Hindi and English', () => {
   assert.match(localCounselor('salary for data analyst', base), /LPA/);
   assert.match(localCounselor('I feel stressed and want to give up', base), /14416/);
 });
+
+import { computeSelfAnalysis } from '../src/engine/selfanalysis.js';
+import { recommendBusinesses } from '../src/engine/readiness.js';
+import { CAREER_FUTURE, BUSINESSES, DECLINING, futureOf, trendOf, demandSeries } from '../src/data/future.js';
+
+test('every career has future outlook data; businesses reference real skills', () => {
+  for (const c of CAREERS) assert.ok(CAREER_FUTURE[c.id], `missing future data for ${c.id}`);
+  for (const b of BUSINESSES) for (const s of b.skills) assert.ok(SKILLS[s], `${b.id}: unknown skill ${s}`);
+  for (const d of DECLINING) assert.ok(CAREERS.some((c) => c.id === d.switchTo), `${d.title}: bad switchTo`);
+});
+
+test('future helpers: series, trend and score ordering', () => {
+  const s = demandSeries(0.1);
+  assert.equal(s[0].value, 100);
+  assert.ok(s[s.length - 1].value > 150);
+  assert.equal(trendOf(-0.05).id, 'declining');
+  assert.equal(trendOf(0.2).id, 'boom');
+  assert.ok(futureOf('ai-ml-engineer').score > futureOf('accountant').score);
+});
+
+test('future demand lifts growing careers in recommendations', () => {
+  const ids = recommendCareers(base, 18).map((c) => c.id);
+  assert.ok(ids.indexOf('ai-ml-engineer') < ids.indexOf('accountant'));
+  const biz = recommendBusinesses(base, 13).map((b) => b.id);
+  assert.ok(biz.indexOf('solar-business') < biz.indexOf('csc-centre'));
+});
+
+test('self analysis splits strengths and weaknesses with action plans', () => {
+  const pending = computeSelfAnalysis(base);
+  assert.equal(pending.ready, false);
+  assert.equal(pending.nextTest, 'interest');
+  const s = { ...base, tests: { interest: { riasec: { R: 2, I: 12, A: 4, S: 3, E: 6, C: 9 } }, aptitude: { score: 85 }, communication: { score: 40 }, softskills: { score: 60 } } };
+  const a = computeSelfAnalysis(s);
+  assert.equal(a.ready, true);
+  assert.ok(a.strengths.some((x) => x.id === 'aptitude'));
+  const weak = a.weaknesses.find((x) => x.id === 'communication');
+  assert.ok(weak && weak.plan.steps.length >= 3 && weak.plan.resource.url.startsWith('https://'));
+  assert.ok(a.average.some((x) => x.id === 'softskills'));
+  assert.equal(a.interestCode, 'ICE');
+  assert.equal(a.careers.length, 5);
+  assert.ok(a.careers.every((c) => c.future && c.future.series.length === 6));
+  assert.equal(a.businesses.length, 4);
+});

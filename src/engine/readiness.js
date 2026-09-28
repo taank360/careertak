@@ -1,5 +1,6 @@
 import { CAREERS, careerById } from '../data/careers.js';
 import { SKILLS } from '../data/skills.js';
+import { BUSINESSES, futureOf, businessFuture } from '../data/future.js';
 
 // Weights of each readiness dimension (sum = 100).
 export const DIMENSIONS = [
@@ -14,10 +15,10 @@ export const DIMENSIONS = [
 ];
 
 export const BANDS = [
-  { min: 80, id: 'ready', label: 'Job Ready', hi: 'नौकरी के लिए तैयार', color: '#10b981', emoji: '🚀' },
-  { min: 60, id: 'almost', label: 'Almost Ready', hi: 'लगभग तैयार', color: '#6366f1', emoji: '💪' },
-  { min: 40, id: 'developing', label: 'Developing', hi: 'विकासशील', color: '#f59e0b', emoji: '🌱' },
-  { min: 0, id: 'beginner', label: 'Getting Started', hi: 'शुरुआत', color: '#f43f5e', emoji: '🧭' },
+  { min: 80, id: 'ready', label: 'Job Ready', hi: 'नौकरी के लिए तैयार', color: '#15803d', emoji: '🚀' },
+  { min: 60, id: 'almost', label: 'Almost Ready', hi: 'लगभग तैयार', color: '#0b7a75', emoji: '💪' },
+  { min: 40, id: 'developing', label: 'Developing', hi: 'विकासशील', color: '#b86e00', emoji: '🌱' },
+  { min: 0, id: 'beginner', label: 'Getting Started', hi: 'शुरुआत', color: '#c9382a', emoji: '🧭' },
 ];
 
 export const bandFor = (score) => BANDS.find((b) => score >= b.min) || BANDS[BANDS.length - 1];
@@ -133,21 +134,48 @@ export function riasecProfile(state) {
 const STREAM_FIT = { iti: ['iti'], diploma: ['diploma', 'engineering'], '10th': ['iti'], '12th': [] };
 
 /** Rank careers for this student by interest fit, current skill match and stream eligibility. */
+const interestFitFor = (code, interest) => {
+  if (!interest) return 0.5;
+  const w = [3, 2, 1];
+  return code.split('').reduce((s, k, i) => s + w[i] * interest.norm[k], 0) / 6;
+};
+
+/** Skills from `ids` where the student is already at a useful level — used to explain a match. */
+function strengthsFor(ids, state) {
+  return ids.filter((id) => effectiveLevel(id, state) >= 3).map((id) => SKILLS[id]?.name).filter(Boolean);
+}
+
+/**
+ * Rank careers for this student. Fit blends interest (RIASEC), current skills, stream eligibility
+ * and FUTURE DEMAND, so careers that are growing and hard to automate rank higher.
+ */
 export function recommendCareers(state, limit = 5) {
   const { profile = {} } = state;
   const interest = riasecProfile(state);
   const streams = new Set([profile.stream, ...(STREAM_FIT[profile.education] || [])].filter(Boolean));
   return CAREERS.map((c) => {
     const skill = roleMatch(c.id, state);
-    let interestFit = 0.5;
-    if (interest) {
-      const w = [3, 2, 1];
-      interestFit = c.riasec.split('').reduce((s, k, i) => s + w[i] * interest.norm[k], 0) / 6;
-    }
+    const interestFit = interestFitFor(c.riasec, interest);
     const streamFit = streams.size === 0 ? 0.6 : c.streams.some((s) => streams.has(s)) ? 1 : 0.25;
-    const interestBonus = (profile.interests || []).includes(c.sector) ? 0.1 : 0;
-    const fit = Math.round(clamp((0.45 * interestFit + 0.3 * (skill / 100) + 0.25 * streamFit + interestBonus) * 100));
-    return { ...c, fit, skill, interestFit: Math.round(interestFit * 100) };
+    const interestBonus = (profile.interests || []).includes(c.sector) ? 0.05 : 0;
+    const future = futureOf(c.id);
+    const fit = Math.round(clamp((0.35 * interestFit + 0.25 * (skill / 100) + 0.15 * streamFit + 0.25 * (future.score / 100) + interestBonus) * 100));
+    return { ...c, kind: 'job', fit, skill, interestFit: Math.round(interestFit * 100), future, strengths: strengthsFor(c.skills.map(([id]) => id), state) };
+  })
+    .sort((a, b) => b.fit - a.fit)
+    .slice(0, limit);
+}
+
+/** Rank self-employment / business ideas the same way (interest + skills + future demand). */
+export function recommendBusinesses(state, limit = 4) {
+  const interest = riasecProfile(state);
+  return BUSINESSES.map((b) => {
+    const interestFit = interestFitFor(b.riasec, interest);
+    const skill = b.skills.reduce((s, id) => s + Math.min(1, effectiveLevel(id, state) / 3), 0) / b.skills.length;
+    const future = businessFuture(b);
+    const eBonus = interest ? interest.norm.E * 0.08 : 0;
+    const fit = Math.round(clamp((0.4 * interestFit + 0.25 * skill + 0.35 * (future.score / 100) + eBonus) * 100));
+    return { ...b, kind: 'business', fit, skill: Math.round(skill * 100), interestFit: Math.round(interestFit * 100), future, strengths: strengthsFor(b.skills, state) };
   })
     .sort((a, b) => b.fit - a.fit)
     .slice(0, limit);

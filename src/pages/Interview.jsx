@@ -233,7 +233,7 @@ export default function Interview() {
         ) : (
           <div className="mt-16">
             <div className="card row" style={{ gap: 14 }}>
-              <ScoreRing value={evalRes.score} size={84} stroke={9} color={evalRes.score >= 65 ? '#10b981' : evalRes.score >= 45 ? '#6366f1' : '#f43f5e'} track="var(--surface-2)" />
+              <ScoreRing value={evalRes.score} size={84} stroke={9} color={evalRes.score >= 65 ? '#15803d' : evalRes.score >= 45 ? '#0b7a75' : '#c9382a'} track="var(--surface-2)" />
               <div className="grow small">
                 <div className="row between"><span>Relevance</span><b>{evalRes.relevance}</b></div>
                 <div className="row between"><span>Structure</span><b>{evalRes.structure}</b></div>

@@ -2,7 +2,7 @@
 // career titles and key labels carry Hindi translations in the data files.
 const STRINGS = {
   en: {
-    home: 'Home', assess: 'Assess', roadmap: 'Roadmap', jobs: 'Jobs', coach: 'AI Coach', profile: 'Profile',
+    home: 'Home', assess: 'Assess', analysis: 'Analysis', careers: 'Careers', selfAnalysis: 'Self Analysis', future: 'Future Careers', roadmap: 'Roadmap', jobs: 'Jobs', coach: 'AI Coach', profile: 'Profile',
     hello: 'Hello', readiness: 'Career Readiness', readinessScore: 'Readiness Score', basedOn: 'Based on {n}% of assessments',
     nextSteps: 'Your next best steps', seeAll: 'See all', quickTools: 'Quick tools', skillGap: 'Skill Gap', resume: 'Resume',
     interview: 'Mock Interview', explore: 'Explore Careers', report: 'Report Card', institute: 'Placement Cell',
@@ -18,7 +18,7 @@ const STRINGS = {
     tagline: 'Know where you stand today. Know what to do next.',
   },
   hi: {
-    home: 'होम', assess: 'आकलन', roadmap: 'रोडमैप', jobs: 'नौकरियाँ', coach: 'AI कोच', profile: 'प्रोफ़ाइल',
+    home: 'होम', assess: 'आकलन', analysis: 'विश्लेषण', careers: 'करियर', selfAnalysis: 'स्व-विश्लेषण', future: 'भविष्य के करियर', roadmap: 'रोडमैप', jobs: 'नौकरियाँ', coach: 'AI कोच', profile: 'प्रोफ़ाइल',
     hello: 'नमस्ते', readiness: 'करियर तैयारी', readinessScore: 'तैयारी स्कोर', basedOn: '{n}% आकलन पर आधारित',
     nextSteps: 'आपके अगले सबसे अच्छे कदम', seeAll: 'सभी देखें', quickTools: 'त्वरित टूल', skillGap: 'स्किल गैप', resume: 'रिज़्यूमे',
     interview: 'मॉक इंटरव्यू', explore: 'करियर खोजें', report: 'रिपोर्ट कार्ड', institute: 'प्लेसमेंट सेल',

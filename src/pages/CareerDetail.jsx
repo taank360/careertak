@@ -1,7 +1,8 @@
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
-import { ExternalLink, TrendingUp, IndianRupee, Flame } from 'lucide-react';
+import { ExternalLink, TrendingUp, IndianRupee, ShieldCheck } from 'lucide-react';
 import { useApp } from '../store/AppContext.jsx';
-import { TopBar, ScoreRing } from '../components/ui.jsx';
+import { TopBar, ScoreRing, DemandChart, TrendBadge, RiskMeter } from '../components/ui.jsx';
+import { futureOf, riskLabel, TREND_SOURCE } from '../data/future.js';
 import { careerById, RIASEC } from '../data/careers.js';
 import { roleMatch, skillGap } from '../engine/readiness.js';
 import { OPPORTUNITIES } from '../data/opportunities.js';
@@ -16,6 +17,7 @@ export default function CareerDetail() {
   const match = roleMatch(c.id, state);
   const gaps = skillGap(c.id, state);
   const opps = OPPORTUNITIES.filter((o) => o.career === c.id);
+  const f = futureOf(c.id);
 
   const setGoal = () => {
     const first = !state.profile.targetRole;
@@ -34,14 +36,25 @@ export default function CareerDetail() {
           <div className="small muted">{c.sector} · {c.riasec.split('').map((k) => RIASEC[k].name).join(' / ')}</div>
         </div>
         <div className="grid-3 mt-16">
-          <div className="stat center"><IndianRupee size={16} style={{ margin: '0 auto' }} /><div className="bold mt-8">{c.salary[0]}–{c.salary[1]}L</div><div className="stat-label">Entry salary</div></div>
-          <div className="stat center"><Flame size={16} style={{ margin: '0 auto' }} /><div className="bold mt-8">{c.demand}</div><div className="stat-label">Demand</div></div>
-          <div className="stat center"><TrendingUp size={16} style={{ margin: '0 auto' }} /><div className="bold mt-8">+{c.growth}%</div><div className="stat-label">Growth</div></div>
+          <div className="stat center"><IndianRupee size={16} style={{ margin: '0 auto' }} color="var(--brand)" /><div className="bold mt-8 num">{c.salary[0]}–{c.salary[1]}L</div><div className="stat-label">Entry salary / yr</div></div>
+          <div className="stat center"><TrendingUp size={16} style={{ margin: '0 auto' }} color="var(--ok)" /><div className="bold mt-8 num" style={{ color: f.growth2030 >= 0 ? 'var(--ok)' : 'var(--bad)' }}>{f.growth2030 >= 0 ? '+' : ''}{f.growth2030}%</div><div className="stat-label">Demand by 2030</div></div>
+          <div className="stat center"><ShieldCheck size={16} style={{ margin: '0 auto' }} color="var(--accent-ink)" /><div className="bold mt-8">{riskLabel(f.risk)}</div><div className="stat-label">Automation risk</div></div>
+        </div>
+        <div className="card mt-16">
+          <div className="row between"><span className="title-md">Future demand</span><TrendBadge trend={f.trend} lang={lang} /></div>
+          <div className="mt-8"><DemandChart series={f.series} /></div>
+          <div className="row mt-8" style={{ gap: 10 }}>
+            <span className="tiny faint" style={{ whiteSpace: 'nowrap' }}>Automation risk {f.risk}%</span>
+            <div className="grow"><RiskMeter risk={f.risk} /></div>
+            <span className="badge accent">Future score {f.score}</span>
+          </div>
+          <p className="small muted mt-12">{f.note}</p>
+          <p className="tiny faint mt-8">{TREND_SOURCE}</p>
         </div>
         <div className="card mt-16"><p className="small">{c.about}</p></div>
 
         <div className="card mt-16 row" style={{ gap: 16 }}>
-          <ScoreRing value={match} size={84} stroke={9} color="#6366f1" track="var(--surface-2)" label={`${match}%`} />
+          <ScoreRing value={match} size={84} stroke={9} color="#0b7a75" track="var(--surface-2)" label={`${match}%`} />
           <div className="grow">
             <div className="title-md">Your skill match</div>
             <div className="small muted">{gaps.filter((g) => g.status !== 'strong').length} skills to build</div>

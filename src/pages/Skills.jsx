@@ -60,7 +60,7 @@ export default function Skills() {
         {tab === 'gap' ? (
           <>
             <div className="card row" style={{ gap: 16 }}>
-              <ScoreRing value={match} size={96} stroke={10} color="#6366f1" track="var(--surface-2)" label={`${match}%`} />
+              <ScoreRing value={match} size={96} stroke={10} color="#0b7a75" track="var(--surface-2)" label={`${match}%`} />
               <div className="grow">
                 <div className="title-md">{career.icon} {lang === 'hi' ? career.hi : career.title}</div>
                 <div className="small muted mt-8">

@@ -178,7 +178,8 @@ function QuizRun({ id }) {
               ))}
             </div>
           </div>
-          <button className="btn primary block mt-16" onClick={() => nav('/explore')}>Explore & set my goal</button>
+          <button className="btn primary block mt-16" onClick={() => nav('/analysis')}>Continue self-analysis</button>
+          <button className="btn ghost block mt-8" onClick={() => nav('/future')}>See future-ready careers</button>
         </div>
       </>
     );
@@ -227,7 +228,7 @@ function QuizRun({ id }) {
         </div>
         <div className="row mt-16">
           <button className="btn" onClick={() => setPhase('intro')}><RotateCcw size={16} /> Retake</button>
-          <button className="btn primary grow" onClick={() => nav('/')}>See my readiness</button>
+          <button className="btn primary grow" onClick={() => nav('/analysis')}>My self-analysis</button>
         </div>
       </div>
     </>

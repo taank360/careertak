@@ -100,7 +100,7 @@ export default function Institute() {
           {gapFreq.map(({ g, pct }) => (
             <div key={g} style={{ padding: '6px 0' }}>
               <div className="row between small"><span>{g}</span><b>{pct}%</b></div>
-              <Bar value={pct} thin color="linear-gradient(90deg,#f59e0b,#f43f5e)" />
+              <Bar value={pct} thin color="var(--accent)" />
             </div>
           ))}
         </div>

@@ -17,6 +17,8 @@ import Explore from './pages/Explore.jsx';
 import CareerDetail from './pages/CareerDetail.jsx';
 import Report from './pages/Report.jsx';
 import Institute from './pages/Institute.jsx';
+import SelfAnalysis from './pages/SelfAnalysis.jsx';
+import Future from './pages/Future.jsx';
 
 // Routes that hide the bottom navigation (focused, full-screen flows).
 const FULLSCREEN = [/^\/assess\/.+/, /^\/interview/, /^\/onboarding/];
@@ -52,6 +54,8 @@ function Shell() {
           <Route path="/explore/:id" element={<CareerDetail />} />
           <Route path="/report" element={<Report />} />
           <Route path="/institute" element={<Institute />} />
+          <Route path="/analysis" element={<SelfAnalysis />} />
+          <Route path="/future" element={<Future />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

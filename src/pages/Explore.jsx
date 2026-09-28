@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useApp } from '../store/AppContext.jsx';
-import { TopBar } from '../components/ui.jsx';
+import { TopBar, TrendBadge } from '../components/ui.jsx';
 import { recommendCareers } from '../engine/readiness.js';
 import { CAREERS } from '../data/careers.js';
 
@@ -36,13 +36,14 @@ export default function Explore() {
               <div className="li-ico" style={{ fontSize: 22 }}>{c.icon}</div>
               <div className="grow">
                 <div className="li-title">{lang === 'hi' ? c.hi : c.title} {c.id === state.profile.targetRole && <span className="badge">Goal</span>}</div>
-                <div className="li-sub">{c.sector} · ₹{c.salary[0]}–{c.salary[1]} LPA · {c.demand}</div>
+                <div className="li-sub">{c.sector} · ₹{c.salary[0]}–{c.salary[1]} LPA</div>
+                <div className="row mt-8" style={{ gap: 6 }}><TrendBadge trend={c.future.trend} lang={lang} /><span className="tiny faint">+{c.future.growth2030}% by 2030</span></div>
               </div>
               <div className="center"><div className="bold" style={{ color: c.fit >= 70 ? 'var(--ok)' : 'var(--brand)' }}>{c.fit}%</div><div className="tiny faint">fit</div></div>
             </button>
           ))}
         </div>
-        <p className="tiny faint mt-12">Fit = 45% interests (RIASEC) + 30% current skills + 25% stream eligibility.</p>
+        <p className="tiny faint mt-12">Fit = 35% interests (RIASEC) + 25% current skills + 15% stream eligibility + 25% future demand.</p>
       </div>
     </>
   );

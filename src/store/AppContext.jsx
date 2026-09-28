@@ -23,7 +23,7 @@ export const initialState = {
   xp: 0,
   streak: { count: 0, last: '' },
   history: [],
-  settings: { lang: 'en', theme: 'system' },
+  settings: { lang: 'en' },
 };
 
 function load() {
@@ -70,13 +70,11 @@ export function AppProvider({ children }) {
     });
   }, []);
 
-  // Theme.
+  // Language (UI is light-only by design).
   useEffect(() => {
-    const root = document.documentElement;
-    if (state.settings.theme === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', state.settings.theme);
-    root.lang = state.settings.lang === 'hi' ? 'hi' : 'en';
-  }, [state.settings.theme, state.settings.lang]);
+    document.documentElement.lang = state.settings.lang === 'hi' ? 'hi' : 'en';
+    document.documentElement.removeAttribute('data-theme');
+  }, [state.settings.lang]);
 
   const update = useCallback((fn) => setState((s) => (typeof fn === 'function' ? fn(s) : { ...s, ...fn })), []);
   const updateProfile = useCallback((patch) => setState((s) => ({ ...s, profile: { ...s.profile, ...patch } })), []);

@@ -24,7 +24,7 @@ function ResumePaper({ profile, skills }) {
       <p><b>{p.course || edu || 'Your course'}</b>{p.college && ` — ${p.college}`}{p.gradYear && ` (${p.gradYear})`}{p.cgpa && ` · ${p.cgpa}`}</p>
       {skills.length > 0 && (<><h3>SKILLS</h3><p>{skills.join(' • ')}</p></>)}
       {p.projects.some((x) => x.title) && (
-        <><h3>PROJECTS</h3><ul>{p.projects.filter((x) => x.title).map((x, i) => <li key={i}><b>{x.title}</b>{x.desc && ` — ${x.desc}`}{x.link && <span style={{ color: '#4338ca' }}> ({x.link})</span>}</li>)}</ul></>
+        <><h3>PROJECTS</h3><ul>{p.projects.filter((x) => x.title).map((x, i) => <li key={i}><b>{x.title}</b>{x.desc && ` — ${x.desc}`}{x.link && <span style={{ color: '#075e5a' }}> ({x.link})</span>}</li>)}</ul></>
       )}
       {p.internships.some((x) => x.org) && (
         <><h3>EXPERIENCE</h3><ul>{p.internships.filter((x) => x.org).map((x, i) => <li key={i}><b>{x.role || 'Intern'}</b>, {x.org}{x.months && ` (${x.months} months)`}{x.desc && ` — ${x.desc}`}</li>)}</ul></>
@@ -127,7 +127,7 @@ export default function Resume() {
         {tab === 'analyze' && a && (
           <>
             <div className="card row" style={{ gap: 16 }}>
-              <ScoreRing value={a.score} size={104} stroke={10} color={a.score >= 65 ? '#10b981' : a.score >= 45 ? '#6366f1' : '#f43f5e'} track="var(--surface-2)" sub="ATS" />
+              <ScoreRing value={a.score} size={104} stroke={10} color={a.score >= 65 ? '#15803d' : a.score >= 45 ? '#0b7a75' : '#c9382a'} track="var(--surface-2)" sub="ATS" />
               <div className="grow">
                 <div className="title-lg">{a.grade}</div>
                 <div className="small muted">{a.stats.words} words · {a.stats.verbs} action verbs · {a.stats.numbers} metrics</div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Moon, Sun, Monitor, Download, RotateCcw, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, Download, RotateCcw, ChevronRight } from 'lucide-react';
 import { useApp, levelFromXP } from '../store/AppContext.jsx';
 import { TopBar, Bar } from '../components/ui.jsx';
 import { CAREERS } from '../data/careers.js';
@@ -146,13 +146,6 @@ export default function Profile() {
               <div className="seg">
                 <button className={lang === 'en' ? 'active' : ''} onClick={() => setSetting('lang', 'en')}>English</button>
                 <button className={lang === 'hi' ? 'active' : ''} onClick={() => setSetting('lang', 'hi')}>हिंदी</button>
-              </div>
-            </div>
-            <div className="field"><label>Theme</label>
-              <div className="seg">
-                {[['light', Sun, 'Light'], ['dark', Moon, 'Dark'], ['system', Monitor, 'Auto']].map(([k, Icon, l]) => (
-                  <button key={k} className={state.settings.theme === k ? 'active' : ''} onClick={() => setSetting('theme', k)}><Icon size={14} style={{ display: 'inline', verticalAlign: -2 }} /> {l}</button>
-                ))}
               </div>
             </div>
             <div className="list mt-16">

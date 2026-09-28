@@ -26,7 +26,7 @@ export default function Onboarding() {
   const finish = () => {
     update((s) => ({ ...s, onboarded: true }));
     addXP(50, 'Profile created');
-    nav(unsure || !p.targetRole ? '/assess/interest' : '/', { replace: true });
+    nav(unsure || !p.targetRole ? '/analysis' : '/', { replace: true });
   };
 
   return (
@@ -55,11 +55,11 @@ export default function Onboarding() {
           </div>
           <div className="card mt-24 stack">
             {[
-              [BarChart3, '#6366f1', 'AI Readiness Score', 'See exactly where you stand across 8 employability areas'],
-              [Target, '#f43f5e', 'Skill-gap analysis', 'Compare your skills with what employers need'],
-              [Map, '#10b981', '12-week personalised roadmap', 'Free courses, projects & tasks — step by step'],
-              [Mic, '#f59e0b', 'AI mock interviews', 'Practise by voice in English or Hindi, get instant feedback'],
-              [Briefcase, '#0ea5e9', 'Jobs, internships & MP schemes', 'Matched to your profile and district'],
+              [Target, '#0b7a75', 'Self analysis', 'Find your strong and weak areas with 5 short tests'],
+              [BarChart3, '#b86e00', 'Future-ready career & business picks', 'Matched to your interests, with demand forecast to 2031'],
+              [Map, '#15803d', '12-week personalised roadmap', 'Fix weak areas with free courses & projects'],
+              [Mic, '#c9382a', 'AI mock interviews', 'Practise by voice in English or Hindi, get instant feedback'],
+              [Briefcase, '#2563eb', 'Jobs, internships & MP schemes', 'Matched to your profile and district'],
             ].map(([Icon, color, title, sub]) => (
               <div className="row" key={title}>
                 <div className="li-ico" style={{ background: `${color}1a`, color }}><Icon size={20} /></div>
@@ -120,7 +120,7 @@ export default function Onboarding() {
           <h2 className="title-lg">{lang === 'hi' ? 'आपका करियर लक्ष्य' : 'Your career goal'}</h2>
           <p className="muted mt-8 mb-12">Pick a target role — you can change it anytime.</p>
           <button className={`option${unsure ? ' selected' : ''}`} onClick={() => { setUnsure(true); updateProfile({ targetRole: '' }); }}>
-            <Compass size={22} color="#f43f5e" />
+            <Compass size={22} color="#c9382a" />
             <div className="grow"><div className="bold">I’m not sure yet</div><div className="small muted">Take a 5-min interest test and get AI suggestions</div></div>
           </button>
           <div className="section-head mt-16"><h2>Or choose a role</h2></div>
@@ -171,7 +171,7 @@ export default function Onboarding() {
       {step > 0 && (
         <div className="mt-24">
           <button className="btn primary block" disabled={!canNext} onClick={() => (step === total - 1 ? finish() : setStep(step + 1))}>
-            {step === total - 1 ? (unsure || !p.targetRole ? 'Finish & take interest test' : 'See my readiness') : t('continue')}
+            {step === total - 1 ? (unsure || !p.targetRole ? 'Finish & start self-analysis' : 'See my readiness') : t('continue')}
           </button>
         </div>
       )}

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, ClipboardCheck, Sparkles, Map, Briefcase, ChevronLeft, X } from 'lucide-react';
+import { Home, ScanSearch, Sparkles, TrendingUp, Briefcase, ChevronLeft, X } from 'lucide-react';
 import { useApp } from '../store/AppContext.jsx';
 
 export function Logo({ size = 34 }) {
@@ -8,14 +8,14 @@ export function Logo({ size = 34 }) {
     <svg className="brand-mark" width={size} height={size} viewBox="0 0 512 512" aria-hidden="true">
       <defs>
         <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#6366f1" />
-          <stop offset="1" stopColor="#9333ea" />
+          <stop offset="0" stopColor="#0b7a75" />
+          <stop offset="1" stopColor="#075e5a" />
         </linearGradient>
       </defs>
       <rect width="512" height="512" rx="120" fill="url(#lg)" />
       <path d="M136 330 L216 250 L276 300 L376 184" fill="none" stroke="#fff" strokeWidth="40" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M316 180 H380 V244" fill="none" stroke="#fff" strokeWidth="40" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="136" cy="330" r="26" fill="#fbbf24" />
+      <circle cx="136" cy="330" r="26" fill="#f2a516" />
     </svg>
   );
 }
@@ -39,9 +39,9 @@ export function BottomNav() {
   const { t } = useApp();
   const items = [
     { to: '/', icon: Home, label: t('home'), end: true },
-    { to: '/assess', icon: ClipboardCheck, label: t('assess') },
+    { to: '/analysis', icon: ScanSearch, label: t('analysis') },
     { to: '/chat', icon: Sparkles, label: t('coach'), center: true },
-    { to: '/roadmap', icon: Map, label: t('roadmap') },
+    { to: '/future', icon: TrendingUp, label: t('careers') },
     { to: '/jobs', icon: Briefcase, label: t('jobs') },
   ];
   return (
@@ -56,7 +56,7 @@ export function BottomNav() {
   );
 }
 
-export function ScoreRing({ value = 0, size = 132, stroke = 12, color = '#fff', track = 'rgba(255,255,255,.22)', label, sub }) {
+export function ScoreRing({ value = 0, size = 132, stroke = 12, color = '#f2a516', track = 'rgba(255,255,255,.22)', label, sub }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, value));
@@ -172,10 +172,10 @@ export function Radar({ data, size = 240 }) {
         const [x, y] = pt(i, 1);
         return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border)" strokeWidth="1" />;
       })}
-      <polygon points={poly} fill="rgba(99,102,241,.25)" stroke="#6366f1" strokeWidth="2" strokeLinejoin="round" />
+      <polygon points={poly} fill="rgba(11,122,117,.16)" stroke="#0b7a75" strokeWidth="2" strokeLinejoin="round" />
       {data.map((d, i) => {
         const [x, y] = pt(i, (d.value ?? 0) / 100);
-        return <circle key={i} cx={x} cy={y} r="3.5" fill={d.value == null ? 'var(--text-3)' : '#6366f1'} />;
+        return <circle key={i} cx={x} cy={y} r="3.5" fill={d.value == null ? 'var(--text-3)' : '#0b7a75'} />;
       })}
       {data.map((d, i) => {
         const [x, y] = pt(i, 1.24);
@@ -201,3 +201,50 @@ export function Empty({ emoji = '✨', title, sub, action }) {
 }
 
 export const scoreColor = (v) => (v == null ? 'var(--text-3)' : v >= 75 ? 'var(--ok)' : v >= 50 ? 'var(--brand)' : v >= 35 ? 'var(--warn)' : 'var(--bad)');
+
+/** Demand forecast line chart (index, START_YEAR = 100). */
+export function DemandChart({ series, height = 120, compact = false }) {
+  const W = 300;
+  const H = height;
+  const pad = { l: compact ? 4 : 30, r: compact ? 4 : 10, t: 12, b: compact ? 4 : 22 };
+  const vals = series.map((p) => p.value);
+  const lo = Math.min(60, ...vals);
+  const hi = Math.max(140, ...vals);
+  const x = (i) => pad.l + (i * (W - pad.l - pad.r)) / (series.length - 1);
+  const y = (v) => pad.t + ((hi - v) * (H - pad.t - pad.b)) / (hi - lo);
+  const up = vals[vals.length - 1] >= vals[0];
+  const color = vals[vals.length - 1] < 100 ? 'var(--bad)' : up && vals[vals.length - 1] >= 125 ? 'var(--ok)' : 'var(--brand)';
+  const line = series.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(' ');
+  const area = `${line} L${x(series.length - 1)},${H - pad.b} L${x(0)},${H - pad.b} Z`;
+  const last = series[series.length - 1];
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} role="img" aria-label={`Demand index from ${series[0].year} to ${last.year}: ${series[0].value} to ${last.value}`}>
+      {!compact && [lo, 100, hi].map((g) => (
+        <g key={g}>
+          <line x1={pad.l} x2={W - pad.r} y1={y(g)} y2={y(g)} stroke="var(--border)" strokeDasharray={g === 100 ? '0' : '3 4'} />
+          <text x={pad.l - 6} y={y(g) + 3.5} fontSize="9.5" textAnchor="end" fill="var(--text-3)">{g}</text>
+        </g>
+      ))}
+      <path d={area} fill={color} opacity=".1" />
+      <path d={line} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={x(series.length - 1)} cy={y(last.value)} r="4" fill={color} stroke="#fff" strokeWidth="2" />
+      {!compact && series.map((p, i) => (
+        <text key={p.year} x={x(i)} y={H - 6} fontSize="9.5" textAnchor="middle" fill="var(--text-3)">{p.year}</text>
+      ))}
+    </svg>
+  );
+}
+
+export function TrendBadge({ trend, lang }) {
+  return <span className={`badge ${trend.tone}`}>{trend.arrow} {lang === 'hi' ? trend.hi : trend.label}</span>;
+}
+
+export function RiskMeter({ risk }) {
+  const n = Math.round(risk / 10);
+  const color = risk >= 60 ? 'var(--bad)' : risk >= 35 ? 'var(--accent)' : 'var(--ok)';
+  return (
+    <div className="meter" aria-label={`Automation risk ${risk}%`}>
+      {Array.from({ length: 10 }, (_, i) => <i key={i} style={i < n ? { background: color } : undefined} />)}
+    </div>
+  );
+}

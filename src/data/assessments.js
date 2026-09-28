@@ -9,7 +9,7 @@ export const MODULES = [
     hi: 'योग्यता व तर्क',
     icon: '🧮',
     minutes: 12,
-    color: '#6366f1',
+    color: '#0b7a75',
     desc: 'Quantitative, logical and data interpretation — used by almost every recruiter.',
     questions: [
       { q: 'A shirt costs ₹800 after a 20% discount. What was the original price?', o: ['₹960', '₹1,000', '₹1,040', '₹1,100'], a: 1, e: '0.8 × P = 800 → P = 1000.' },
@@ -32,7 +32,7 @@ export const MODULES = [
     hi: 'अंग्रेज़ी संवाद',
     icon: '🗣️',
     minutes: 8,
-    color: '#0ea5e9',
+    color: '#2563eb',
     desc: 'Grammar, vocabulary and business-writing sense for interviews and the workplace.',
     questions: [
       { q: 'Choose the correct sentence:', o: ['He don’t know the answer.', 'He doesn’t knows the answer.', 'He doesn’t know the answer.', 'He not know the answer.'], a: 2, e: '“doesn’t” + base verb “know”.' },
@@ -53,7 +53,7 @@ export const MODULES = [
     hi: 'डिजिटल साक्षरता',
     icon: '📱',
     minutes: 6,
-    color: '#10b981',
+    color: '#15803d',
     desc: 'Everyday workplace tech, online safety and productivity tools.',
     questions: [
       { q: 'Which is the strongest password?', o: ['password123', 'Rahul2004', 'T!g3r#Bhopal_92', '12345678'], a: 2, e: 'Long, mixed characters, not a dictionary word.' },
@@ -72,7 +72,7 @@ export const MODULES = [
     hi: 'कार्यस्थल व्यवहार',
     icon: '🤝',
     minutes: 6,
-    color: '#f59e0b',
+    color: '#f2a516',
     type: 'sjt',
     desc: 'Situational judgement: teamwork, ownership, ethics and handling pressure.',
     questions: [
@@ -90,7 +90,7 @@ export const MODULES = [
     hi: 'प्रोग्रामिंग बेसिक्स',
     icon: '👨‍💻',
     minutes: 8,
-    color: '#8b5cf6',
+    color: '#7c5cc4',
     desc: 'Core programming logic for software, web and AI roles.',
     questions: [
       { q: 'What is the output of: print(2 ** 3) in Python?', o: ['6', '8', '9', '5'], a: 1, e: '** is exponent: 2³ = 8.' },
@@ -109,7 +109,7 @@ export const MODULES = [
     hi: 'डेटा व एक्सेल',
     icon: '📈',
     minutes: 7,
-    color: '#14b8a6',
+    color: '#0f9b93',
     desc: 'Spreadsheets, SQL and statistics for analyst roles.',
     questions: [
       { q: 'Which Excel function finds a value in a table by key?', o: ['SUMIF', 'VLOOKUP / XLOOKUP', 'CONCAT', 'TODAY'], a: 1, e: '' },
@@ -128,7 +128,7 @@ export const MODULES = [
     hi: 'वित्त व बैंकिंग',
     icon: '💰',
     minutes: 7,
-    color: '#eab308',
+    color: '#b8860b',
     desc: 'Accounting, GST and banking awareness for commerce roles.',
     questions: [
       { q: 'The golden rule for a Real account is:', o: ['Debit the receiver, credit the giver', 'Debit what comes in, credit what goes out', 'Debit expenses, credit incomes', 'None'], a: 1, e: '' },
@@ -147,7 +147,7 @@ export const MODULES = [
     hi: 'डिजिटल मार्केटिंग',
     icon: '📣',
     minutes: 5,
-    color: '#ec4899',
+    color: '#c2417a',
     desc: 'SEO, social media and online ads fundamentals.',
     questions: [
       { q: 'SEO stands for:', o: ['Search Engine Optimisation', 'Social Engagement Online', 'Sales Execution Order', 'Site Error Output'], a: 0, e: '' },
@@ -164,7 +164,7 @@ export const MODULES = [
     hi: 'करियर रुचि परीक्षण',
     icon: '🧭',
     minutes: 5,
-    color: '#f43f5e',
+    color: '#c9382a',
     type: 'likert',
     desc: 'Discover careers that match your personality (RIASEC / Holland Code). No right or wrong answers.',
     questions: [

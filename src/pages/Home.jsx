@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Flame, ChevronRight, Download, WifiOff } from 'lucide-react';
 import { useApp, levelFromXP } from '../store/AppContext.jsx';
-import { Logo, ScoreRing, Bar } from '../components/ui.jsx';
-import { computeReadiness, nextActions, recommendCareers, roleMatch } from '../engine/readiness.js';
+import { Logo, ScoreRing, Bar, DemandChart } from '../components/ui.jsx';
+import { computeReadiness, nextActions, roleMatch } from '../engine/readiness.js';
+import { computeSelfAnalysis } from '../engine/selfanalysis.js';
 import { roadmapProgress } from '../engine/roadmap.js';
 import { careerById } from '../data/careers.js';
 
@@ -35,79 +36,117 @@ export default function Home() {
   const install = useInstallPrompt();
   const online = useOnline();
   const r = useMemo(() => computeReadiness(state), [state]);
-  const actions = useMemo(() => nextActions(state).slice(0, 4), [state]);
-  const recs = useMemo(() => recommendCareers(state, 4), [state]);
+  const sa = useMemo(() => computeSelfAnalysis(state), [state]);
+  const actions = useMemo(() => nextActions(state).slice(0, 3), [state]);
   const career = careerById(state.profile.targetRole);
   const lvl = levelFromXP(state.xp);
   const rp = roadmapProgress(state.roadmap);
   const first = state.profile.name.split(' ')[0] || 'there';
   const hour = new Date().getHours();
-  const greet = lang === 'hi' ? 'नमस्ते' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const testsDone = Object.keys(state.tests).length;
+  const hi = lang === 'hi';
+  const greet = hi ? 'नमस्ते' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   useEffect(() => { if (r.coverage > 0) snapshot(r.score); }, [r.score, r.coverage, snapshot]);
 
   const tools = [
-    ['📋', t('skillGap'), '/skills', '#6366f1'],
-    ['📄', t('resume'), '/resume', '#0ea5e9'],
-    ['🎤', t('interview'), '/interview', '#f59e0b'],
-    ['🧭', t('explore'), '/explore', '#f43f5e'],
-    ['📊', t('report'), '/report', '#10b981'],
-    ['🗺️', t('roadmap'), '/roadmap', '#8b5cf6'],
-    ['🏛️', t('schemes'), '/jobs?tab=schemes', '#eab308'],
-    ['🏫', t('institute'), '/institute', '#14b8a6'],
+    ['📝', t('assessments'), '/assess'],
+    ['📋', t('skillGap'), '/skills'],
+    ['🗺️', t('roadmap'), '/roadmap'],
+    ['📄', t('resume'), '/resume'],
+    ['🎤', t('interview'), '/interview'],
+    ['📊', t('report'), '/report'],
+    ['🏛️', t('schemes'), '/jobs?tab=schemes'],
+    ['🏫', t('institute'), '/institute'],
   ];
 
   return (
     <>
       <header className="topbar">
         <div className="logo-brand"><Logo /><span className="brand-name">Career<span>Tak</span></span></div>
-        <span className="badge warn" title="Daily streak"><Flame size={13} /> {state.streak.count}</span>
+        <span className="badge accent" title="Daily streak"><Flame size={13} /> {state.streak.count}</span>
         <button className="avatar" onClick={() => nav('/profile')} aria-label="Profile">{first[0]?.toUpperCase()}</button>
       </header>
 
       <div className="page">
         {!online && <div className="card flat row small mb-12" style={{ padding: 10 }}><WifiOff size={16} /> {t('offline')}</div>}
 
-        <p className="muted small">{greet},</p>
-        <h2 className="title-xl mb-12">{first} 👋</h2>
-
-        <Link to="/report" className="card hero tap" style={{ display: 'block' }}>
-          <div className="row" style={{ gap: 16 }}>
-            <ScoreRing value={r.score} size={116} sub="/ 100" />
-            <div className="grow">
-              <div className="small" style={{ opacity: 0.85 }}>{t('readinessScore')}</div>
-              <div className="title-lg" style={{ color: '#fff' }}>{r.band.emoji} {lang === 'hi' ? r.band.hi : r.band.label}</div>
-              <div className="tiny mt-8" style={{ opacity: 0.85 }}>{t('basedOn', { n: r.coverage })}</div>
-              <div className="mt-8"><Bar value={r.coverage} thin glass /></div>
-              <div className="tiny mt-8 row" style={{ gap: 4, opacity: 0.95 }}>{t('report')} <ChevronRight size={14} /></div>
-            </div>
+        <div className="row between mb-12" style={{ alignItems: 'flex-end' }}>
+          <div>
+            <p className="muted small">{greet},</p>
+            <h2 className="title-xl">{first} 👋</h2>
           </div>
-        </Link>
-
-        <div className="grid-3 mt-12">
-          <div className="stat"><div className="stat-num">{lvl.level}</div><div className="stat-label">{t('level')} · {state.xp} XP</div><div className="mt-8"><Bar value={(lvl.into / lvl.next) * 100} thin /></div></div>
-          <div className="stat"><div className="stat-num">{testsDone}<span className="faint small">/9</span></div><div className="stat-label">{t('assessments')}</div></div>
-          <div className="stat"><div className="stat-num">{rp.pct}%</div><div className="stat-label">{t('roadmap')}</div></div>
+          <div style={{ textAlign: 'right' }}>
+            <div className="eyebrow">{t('level')} {lvl.level}</div>
+            <div className="small bold num" style={{ color: 'var(--brand)' }}>{state.xp} XP</div>
+          </div>
         </div>
 
-        {career ? (
-          <Link to="/skills" className="card tap row mt-12" style={{ color: 'var(--text)' }}>
-            <div className="li-ico" style={{ fontSize: 24 }}>{career.icon}</div>
+        {/* 1. Self analysis — the entry point of the journey */}
+        <button className="card hero tap" style={{ display: 'block', width: '100%', textAlign: 'left' }} onClick={() => nav('/analysis')}>
+          <div className="eyebrow">{hi ? 'चरण 1 · स्व-विश्लेषण' : 'Step 1 · Self analysis'}</div>
+          {sa.ready ? (
+            <>
+              <div className="title-lg mt-8" style={{ color: '#fff' }}>{hi ? 'आपकी ताकत और कमज़ोरियाँ' : 'Your strengths & weak areas'}</div>
+              <div className="chips wrap mt-12">
+                {sa.strengths.slice(0, 2).map((x) => <span key={x.id} className="badge ok">💪 {hi ? x.hi : x.label}</span>)}
+                {sa.weaknesses.slice(0, 2).map((x) => <span key={x.id} className="badge bad">🎯 {hi ? x.hi : x.label}</span>)}
+                {sa.strengths.length + sa.weaknesses.length === 0 && <span className="badge glass">All areas average — see report</span>}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="title-lg mt-8" style={{ color: '#fff' }}>{hi ? 'जानिए आप किसमें अच्छे हैं' : 'Discover what you are good at'}</div>
+              <p className="small mt-8" style={{ opacity: 0.9 }}>{hi ? '5 छोटे टेस्ट → ताकत, कमज़ोरियाँ और आपके लिए सही करियर' : '5 short tests → your strengths, weak areas and the careers that suit you.'}</p>
+              <div className="row mt-12" style={{ gap: 10 }}>
+                <div className="grow"><Bar value={(sa.journeyDone / sa.journeyTotal) * 100} glass /></div>
+                <span className="small bold num">{sa.journeyDone}/{sa.journeyTotal}</span>
+              </div>
+            </>
+          )}
+          <div className="row mt-12 small bold" style={{ gap: 4, color: 'var(--accent)' }}>{sa.ready ? (hi ? 'पूरी रिपोर्ट देखें' : 'Open full analysis') : sa.journeyDone ? (hi ? 'जारी रखें' : 'Continue') : (hi ? 'शुरू करें' : 'Start now')} <ChevronRight size={16} /></div>
+        </button>
+
+        {/* 2. Future-proof matches */}
+        <div className="section">
+          <div className="section-head">
+            <h2>{hi ? 'चरण 2 · भविष्य के लिए सही करियर' : 'Step 2 · Future-ready matches'}</h2>
+            <Link to="/future">{t('seeAll')}</Link>
+          </div>
+          <div className="chips" style={{ gap: 10, paddingBottom: 8 }}>
+            {[...sa.careers.slice(0, 3), ...sa.businesses.slice(0, 2)].map((c) => (
+              <button key={c.id} className="card tap" style={{ minWidth: 168, maxWidth: 168, textAlign: 'left', padding: 14 }} onClick={() => nav(c.kind === 'business' ? '/future?tab=business' : `/explore/${c.id}`)}>
+                <div className="row between"><span style={{ fontSize: 26 }}>{c.icon}</span><span className="badge plain">{c.kind === 'business' ? 'Business' : 'Job'}</span></div>
+                <div className="bold small mt-8" style={{ lineHeight: 1.3, minHeight: 36, whiteSpace: 'normal' }}>{hi ? c.hi : c.title}</div>
+                <DemandChart series={c.future.series} height={34} compact />
+                <div className="row between mt-8"><span className="badge accent">{c.fit}% fit</span><span className="tiny bold" style={{ color: 'var(--ok)' }}>▲ {c.future.growth2030}%</span></div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Readiness */}
+        <div className="section">
+          <div className="section-head"><h2>{hi ? 'चरण 3 · नौकरी की तैयारी' : 'Step 3 · Job readiness'}</h2><Link to="/report">{t('report')}</Link></div>
+          <Link to="/report" className="card tap row" style={{ gap: 16, color: 'var(--text)' }}>
+            <ScoreRing value={r.score} size={92} stroke={9} color="#0b7a75" track="#e2ece9" sub="/100" />
             <div className="grow">
-              <div className="tiny faint bold">{t('yourGoal').toUpperCase()}</div>
-              <div className="li-title">{lang === 'hi' ? career.hi : career.title}</div>
-              <div className="mt-8"><Bar value={roleMatch(career.id, state)} thin /></div>
+              <div className="title-md" style={{ color: r.band.color }}>{r.band.emoji} {hi ? r.band.hi : r.band.label}</div>
+              <div className="tiny muted mt-8">{t('basedOn', { n: r.coverage })}</div>
+              {career && (
+                <div className="mt-8">
+                  <div className="row between tiny"><span className="bold">{career.icon} {hi ? career.hi : career.title}</span><span className="num">{roleMatch(career.id, state)}%</span></div>
+                  <div className="mt-8"><Bar value={roleMatch(career.id, state)} thin /></div>
+                </div>
+              )}
             </div>
-            <div className="center"><div className="bold">{roleMatch(career.id, state)}%</div><div className="tiny faint">{t('match')}</div></div>
           </Link>
-        ) : (
-          <Link to="/explore" className="card tap row mt-12" style={{ color: 'var(--text)' }}>
-            <div className="li-ico">🎯</div>
-            <div className="grow"><div className="li-title">Set your career goal</div><div className="li-sub">Explore careers matched to you</div></div>
-            <ChevronRight size={18} />
-          </Link>
-        )}
+          {state.roadmap && (
+            <Link to="/roadmap" className="card tap mt-12" style={{ display: 'block', color: 'var(--text)' }}>
+              <div className="row between"><div className="li-title">🗺️ {t('roadmap')} · {t('week')} {rp.currentWeek}/12</div><span className="badge">{rp.done}/{rp.total}</span></div>
+              <div className="mt-8"><Bar value={rp.pct} /></div>
+            </Link>
+          )}
+        </div>
 
         <div className="section">
           <div className="section-head"><h2>{t('nextSteps')}</h2></div>
@@ -116,7 +155,7 @@ export default function Home() {
               <button key={a.id} className="list-item" onClick={() => nav(a.route)}>
                 <div className="li-ico">{a.icon}</div>
                 <div className="grow"><div className="li-title">{a.title}</div><div className="li-sub">{a.detail}</div></div>
-                <span className="badge">+{a.xp}</span>
+                <span className="badge accent">+{a.xp}</span>
               </button>
             ))}
           </div>
@@ -125,31 +164,11 @@ export default function Home() {
         <div className="section">
           <div className="section-head"><h2>{t('quickTools')}</h2></div>
           <div className="grid-4">
-            {tools.map(([emoji, label, to, color]) => (
+            {tools.map(([emoji, label, to]) => (
               <button key={to} className="tool" onClick={() => nav(to)}>
-                <span className="tool-ico" style={{ background: `${color}1f` }}>{emoji}</span>
+                <span className="tool-ico" style={{ background: 'var(--brand-soft)' }}>{emoji}</span>
                 {label}
               </button>
-            ))}
-          </div>
-        </div>
-
-        {state.roadmap && (
-          <Link to="/roadmap" className="card tap mt-16" style={{ display: 'block', color: 'var(--text)' }}>
-            <div className="row between"><div className="li-title">🗺️ {t('roadmap')} · {t('week')} {rp.currentWeek}/12</div><span className="badge">{rp.done}/{rp.total}</span></div>
-            <div className="mt-8"><Bar value={rp.pct} /></div>
-          </Link>
-        )}
-
-        <div className="section">
-          <div className="section-head"><h2>{t('topMatches')}</h2><Link to="/explore">{t('seeAll')}</Link></div>
-          <div className="chips" style={{ gap: 10, paddingBottom: 8 }}>
-            {recs.map((c) => (
-              <Link key={c.id} to={`/explore/${c.id}`} className="card tap" style={{ minWidth: 150, color: 'var(--text)', padding: 14 }}>
-                <div style={{ fontSize: 28 }}>{c.icon}</div>
-                <div className="bold small mt-8" style={{ lineHeight: 1.3, minHeight: 36 }}>{lang === 'hi' ? c.hi : c.title}</div>
-                <div className="row between mt-8"><span className="badge ok">{c.fit}% fit</span><span className="tiny faint">₹{c.salary[1]}L</span></div>
-              </Link>
             ))}
           </div>
         </div>
